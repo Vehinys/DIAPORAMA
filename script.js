@@ -18,8 +18,9 @@ const startAutoSlide = () => {
     cycle = setInterval(() => goToSlide((currentIndex + 1) % slides.length), 6000);
 };
 
-const restartAutoSlide = () => {
-    clearInterval(cycle);
+const restartAutoSlide = () => { 
+    
+    clearInterval(cycle); 
     startAutoSlide();
 };
 
