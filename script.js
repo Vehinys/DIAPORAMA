@@ -1,31 +1,37 @@
 const slides = document.querySelectorAll(".slide-container");
 const dotButtons = document.querySelectorAll(".dot-button");
+const allDiapos = document.querySelectorAll(".diapo");
 
-dotButtons[0].classList.add("active");
+let currentIndex = 0;
+let cycle;
 
-dotButtons.forEach((button, index) => {
-    button.addEventListener("click", function() {
-        goToSlide(index);
-    });
-});
-
-function goToSlide(index) {
-
-    const allDiapos = document.querySelectorAll(".diapo");
-    allDiapos.forEach(diapo => diapo.classList.remove("visible"));
-    dotButtons.forEach(btn => btn.classList.remove("active"));
+const goToSlide = (index) => {
+    if (index < 0 || index >= slides.length) return;
+    allDiapos.forEach(d => d.classList.remove("visible"));
+    dotButtons.forEach(b => b.classList.remove("active"));
     slides[index].querySelector(".diapo").classList.add("visible");
     dotButtons[index].classList.add("active");
-}
+    currentIndex = index;
+};
 
-document.addEventListener("keydown", function(event) {
-    let currentIndex = Array.from(dotButtons).findIndex(btn => btn.classList.contains("active"));
-    
-    if (event.key === "ArrowRight") {
-        currentIndex = (currentIndex + 1) % slides.length;
-        goToSlide(currentIndex);
-    } else if (event.key === "ArrowLeft") {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        goToSlide(currentIndex);
-    }
+const startAutoSlide = () => {
+    cycle = setInterval(() => goToSlide((currentIndex + 1) % slides.length), 6000);
+};
+
+const restartAutoSlide = () => {
+    clearInterval(cycle);
+    startAutoSlide();
+};
+
+goToSlide(0);
+startAutoSlide();
+
+dotButtons.forEach((btn, i) => btn.addEventListener("click", () => {
+    goToSlide(i);
+    restartAutoSlide();
+}));
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") goToSlide((currentIndex + 1) % slides.length), restartAutoSlide();
+    if (e.key === "ArrowLeft") goToSlide((currentIndex - 1 + slides.length) % slides.length), restartAutoSlide();
 });
